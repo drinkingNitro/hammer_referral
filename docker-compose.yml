@@ -8,7 +8,6 @@ services:
     expose:
       - 5470
     volumes:
-      # - ./data/init.sql:/docker-entrypoint-initdb.d/init.sql
       - pgdata:/var/lib/postgresql/data/
     restart: unless-stopped
     command: -p 5470
@@ -19,7 +18,7 @@ services:
       context: ./backend
     ports:
       - "8017:8017"
-    command: python manage.py runserver 8017
+    command: python manage.py runserver 0.0.0.0:8017
     volumes:
       - ./backend:/app
     depends_on:
