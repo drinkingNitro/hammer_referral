@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 
 from decouple import config
-from django.utils.translation import gettext_lazy
 
 from .cors import *
 from .jazzmin import *
@@ -29,26 +28,16 @@ INTERNAL_IPS = [
     "localhost",
 ]
 
-# Application definition
-THIRD_PARTY_APPS = [
-    'rest_framework',
-    'corsheaders',
-    'drf_yasg',
-    'drf_spectacular',
-    'django_admin_logs',
+ADMIN_APPS = [
+
 ]
 
-if not PRODUCTION:
-    THIRD_PARTY_APPS += [
-        'debug_toolbar'
-    ]
+THIRD_PARTY_APPS = [
 
-ADMIN_APPS = [
-    'jazzmin',
-    'modeltranslation',
 ]
 
 LOCAL_APPS = [
+    'users.apps.UsersConfig',
 
 ]
 
@@ -64,12 +53,9 @@ INSTALLED_APPS = [
 
     *THIRD_PARTY_APPS,
     *LOCAL_APPS,
-    'django_cleanup',
 ]
 
-MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware', # activate only during development
-    
+MIDDLEWARE = [ 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -86,7 +72,10 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [
+            BASE_DIR / 'templates',
+            BASE_DIR / 'users/templates/users'
+            ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -100,6 +89,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
+
+AUTH_USER_MODEL = "users.PhoneUser"
+
+AUTHENTICATION_BACKENDS = [
+    'users.auth_backends.PhoneBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -123,7 +119,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = 'ru-RU'
-TIME_ZONE = "Asia/Bishkek"
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -131,19 +127,8 @@ USE_L10N = True
 
 USE_TZ = True
 
-# LANGUAGES = (
-#     ('ru', gettext_lazy('Russian')),
-#     ('en', gettext_lazy('English')),
-#     ('ky', gettext_lazy('Kyrgyz')),
-# )
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-
-# if DEBUG:
-#     STATICFILES_DIRS = [
-#         os.path.join(BASE_DIR, 'static_back/')
-#     ]
 
 STATIC_URL = 'static_back/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static_root/')
@@ -166,18 +151,3 @@ DATABASES = {
         'PORT': config('POSTGRES_PORT')
     }
 }
-
-# Admin site customization
-
-DJANGO_ADMIN_LOGS_ENABLED = False
-
-REST_FRAMEWORK = {
-
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-}
-
-# EMAIL_HOST = config('EMAIL_HOST')
-# EMAIL_PORT = config('EMAIL_PORT')
-# EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-# EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-# EMAIL_USE_SSL = config('EMAIL_USE_SSL')

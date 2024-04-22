@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Profile</title>
+  </head>
+  <body>
+    <h1>User Profile</h1>
+    <div>
+      <form method="post">
+        {% csrf_token %}
+        <label for="phone_number">Phone number:</label>
+        <input
+          type="text"
+          id="phone_number"
+          name="phone_number"
+          value="{{ user.phone_number }}"
+          readonly
+        /><br /><br />
+        <label for="first_name">First Name:</label>
+        <input
+          type="text"
+          id="first_name"
+          name="first_name"
+          value="{{ user.first_name }}"
+        /><br /><br />
+        <label for="last_name">Last Name:</label>
+        <input
+          type="text"
+          id="last_name"
+          name="last_name"
+          value="{{ user.last_name }}"
+        /><br /><br />
+        <label for="personal_invite_code">Your Personal invite code:</label>
+        <input
+          type="text"
+          id="personal_invite_code"
+          name="personal_invite_code"
+          value="{{ user.personal_invite_code }}"
+          readonly
+        /><br /><br />
+        <label for="referrals">Your referrals:</label>
+        <ol>
+          {% for referral in invited %}
+          <li>{{ referral }}</li>
+          {% endfor %}
+        </ol>
+        <br /><br />
+        <button type="submit">Save</button>
+      </form>
+    </div>
+    <br /><br />
+
+    <div>
+      <form method="post" action="{% url 'users:code-activate' %}">
+        {% csrf_token %}
+        <label for="code">
+          {%if inviter%} You invited by: {%else%} Enter your referral code
+          {%endif%}
+        </label>
+        <input
+          type="text"
+          id="code"
+          name="code"
+          value="{%if inviter %} {{ inviter }} {% else %} {% endif %}"
+          required
+          minlength="6"
+          maxlength="6"
+        /><br /><br />
+        {%if not inviter%}
+        <button type="submit">Activate</button>
+        {%endif%}
+      </form>
+    </div>
+
+    <br /><br />
+    <div>
+      <form method="post" action="{% url 'users:logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+      </form>
+    </div>
+  </body>
+</html>
