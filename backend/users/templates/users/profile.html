@@ -54,19 +54,20 @@
       <form method="post" action="{% url 'users:code-activate' %}">
         {% csrf_token %}
         <label for="code">
-          {%if inviter%} You invited by: {%else%} Enter your referral code
+          {%if inviter.0 %} You invited by: {%else%} Enter your referral code
           {%endif%}
         </label>
         <input
           type="text"
           id="code"
           name="code"
-          value="{%if inviter %} {{ inviter }} {% else %} {% endif %}"
+          value="{%if inviter.0%} {{inviter.0}} (code: {{inviter.1}}) {% else %} {% endif %}"
           required
           minlength="6"
           maxlength="6"
+          size="30"
         /><br /><br />
-        {%if not inviter%}
+        {%if not inviter.0%}
         <button type="submit">Activate</button>
         {%endif%}
       </form>

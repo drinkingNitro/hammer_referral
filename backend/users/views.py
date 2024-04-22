@@ -42,7 +42,7 @@ def verify_view(request):
 @login_required(login_url='/users/login')
 def profile_view(request):
     user = request.user
-    invited_by_phone_number, invited_list = get_referal_data(user)
+    invited_by_phone_number, invited_by_code, invited_list = get_referal_data(user)
     if request.method == 'POST':
         user.first_name = request.POST.get('first_name')
         user.last_name = request.POST.get('last_name')
@@ -50,7 +50,7 @@ def profile_view(request):
         messages.success(request, 'Profile updated successfully')
     return render(request, 'profile.html', {
         'user': user,
-        'inviter': invited_by_phone_number,
+        'inviter': (invited_by_phone_number, invited_by_code),
         'invited': invited_list
         })
 
@@ -64,7 +64,7 @@ def code_activate_view(request):
     user = request.user
     User = get_user_model()
     if request.method == 'POST':
-        have_activated, _ = get_referal_data(user)
+        have_activated, _, _ = get_referal_data(user)
         if have_activated:
             raise ValidationError('You already have one activated invite code.')
         referral_code = request.POST.get('code')

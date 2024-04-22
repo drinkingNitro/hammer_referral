@@ -7,10 +7,11 @@ def get_referal_data(user):
     except ReferalLink.DoesNotExist:
         invited_by = None
     invited_by_phone_number = invited_by.inviter.phone_number if invited_by else None
+    invited_by_code = invited_by.inviter.personal_invite_code if invited_by else None
     try:
         invited_persons = ReferalLink.objects.filter(inviter=user)
     except ReferalLink.DoesNotExist:
         invited_by = []
     invited_list = [instance.invited.phone_number for instance in invited_persons]
     
-    return invited_by_phone_number, invited_list
+    return invited_by_phone_number, invited_by_code, invited_list
